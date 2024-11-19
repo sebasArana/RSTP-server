@@ -1,9 +1,9 @@
 const express = require('express');
 const cors = require('cors');
-const { proxy, scriptUrl } = require('rtsp-relay');
-
 const app = express();
 app.use(cors());
+
+const { proxy, scriptUrl } = require('rtsp-relay')(app);
 
 const handler = proxy({
   url: `rtsp://FamiliaConejin:Carnival2024@@@192.168.18.76:554/stream1`,
@@ -26,23 +26,16 @@ app.get('/', (req, res) =>
 
     playButton.addEventListener('click', () => {
       // Iniciar el reproductor solo después de la interacción del usuario
-      const wsProtocol = location.protocol === 'https:' ? 'wss://' : 'ws://';
-      const wsUrl = wsProtocol + location.host + '/api/stream';
-
       loadPlayer({
-        url: wsUrl,
+        url: 'ws://' + location.host + '/api/stream',
         canvas: canvas
       });
-
-      // Ocultar el botón una vez iniciado
-      playButton.style.display = 'none';
+      playButton.style.display = 'none'; // Ocultar el botón una vez iniciado
     });
   </script>
 `),
 );
 
-// Usar el puerto asignado por Render o uno predeterminado
-const PORT = process.env.PORT || 2000;
-app.listen(PORT, () => {
-  console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
+app.listen(2000, () => {
+  console.log('Servidor ejecutándose en http://localhost:2000');
 });
